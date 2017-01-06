@@ -25,4 +25,6 @@
 
    Created By: Scott McKittrick Dec. 31st 2016
    
- */
+ 
+This library was inspired by:
+https://github.com/bakercp/PacketSerial
