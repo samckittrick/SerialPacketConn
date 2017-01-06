@@ -39,5 +39,10 @@ void ArduinoSerialPacketConn::writeBytes(byte *buffer, int length)
 
 int ArduinoSerialPacketConn::readBytes(byte *buffer, int len)
 {
-  return Serial.readBytes(buffer, len);
+  if(Serial.available())
+    {
+      return Serial.readBytes(buffer, len);
+    }
+  else
+    return 0;
 }

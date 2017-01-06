@@ -31,7 +31,7 @@
 #define SERIALPACKETCONN_H
 
 #include <stdint.h>
-#include "Arduino.h"
+//#include "Arduino.h"
 
 #define MAXCOBSPACKETLEN 257
 #define MAXPAYLOADLEN  255

@@ -40,15 +40,13 @@ void SerialPacketConn::process()
 {
   //Read in as much data as is available until we reach a max size, or a frame end character
   bool packetComplete = false;
-  while(Serial.available() && (recvCount < MAXCOBSPACKETLEN) && !packetComplete)
+  uint8_t buffer;
+  while(readBytes(&buffer, 1) && (recvCount < MAXCOBSPACKETLEN) && !packetComplete)
     {
-      byte buffer;
-      if(readBytes(&buffer, 1))
-	{
-	  packet[recvCount] = buffer;
-	  recvCount++;
+      packet[recvCount] = buffer;
+      recvCount++;
 	  //Serial.write(0xF1);
-	}
+	  
       if(buffer == COBS_FRAMEEND)
 	{
 	  packetComplete = true;
