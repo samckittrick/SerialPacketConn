@@ -1,5 +1,5 @@
 
-Classes for Packet-Based serial communication.
+##Classes for Packet-Based serial communication.
  
 This library was inspired by:
 https://github.com/bakercp/PacketSerial
