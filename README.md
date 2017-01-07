@@ -21,7 +21,7 @@ https://github.com/bakercp/PacketSerial
   ---------------------------------------------------------
   ```
   
-**The SerialPacketConn Class**
+##The SerialPacketConn Class
 
    This is an abstract class intended to provide the functions for creating and managing packets sent accross the serial line. It defines but does not implement functions for the actual setup/teardown and read/write operations on the serial device. To customize for the device it will be running on, create a subclass that implements the following functions:
 
@@ -32,6 +32,32 @@ https://github.com/bakercp/PacketSerial
   virtual void writeBytes(uint8_t *buffer, int length) = 0; //write bytes to serial
 ```
 
-**The ArduinoSerialPacketConn Class**
+##The ArduinoSerialPacketConn Class
 
    This is an Arduino specific subclass of the SerialPacketConn class. It can be used as a library on the Arduino.
+
+**Example Usage**
+
+```
+#include <ArduinoSerialPacketConn.h>
+
+ArduinoSerialPacketConn conn(9600);
+
+void packetReceived(const byte* payload, int payloadLength)
+{
+  //Serial.write(payload, payloadLength);
+  conn.sendMessage(payload, payloadLength);
+  delete [] payload;
+}
+
+void setup() {
+  // put your setup code here, to run once:
+  conn.setPacketReceiver(&packetReceived);
+  conn.connect();
+}
+
+void loop() {
+  // put your main code here, to run repeatedly.
+  conn.process();
+}
+```
