@@ -19,10 +19,8 @@
 
 #include "SerialPacketConn.h"
 
-SerialPacketConn::SerialPacketConn(long speed)
+SerialPacketConn::SerialPacketConn()
 {
-  baudRate = speed;
-
   recvCount = 0;
   payloadLen = 0;
   myReceiver = nullptr;
