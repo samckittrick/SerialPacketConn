@@ -28,7 +28,7 @@
 #include <string>
 #include <cstring>
 #include <fcntl.h>
-
+#include <iostream>
 
 class LinuxSerialPacketConn : public SerialPacketConn
 {
@@ -43,7 +43,11 @@ class LinuxSerialPacketConn : public SerialPacketConn
  private:
   int fd;
   speed_t baudRate;
-  struct termios oldTio;
+  struct termios oldtio;
   std::string devName;
-
+  
+  void writeBytes(uint8_t *buffer, int length);
+  int readBytes(uint8_t *buffer, int length);
+  void setConnAttr(struct termios *newtio);
+};
 #endif

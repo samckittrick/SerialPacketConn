@@ -47,9 +47,6 @@ int LinuxSerialPacketConn::setBaudRate(int rate)
       baudRate = B38400;
       return 0;
     default:
-      #ifdef DEBUG_MODE
-      std::cout << "Unsupported baud rate\n";
-      #endif
       return -1;
     }
 }
@@ -81,7 +78,7 @@ int LinuxSerialPacketConn::connect()
     {
       return -1;
     }
-
+  //std::cout << "Opening File Descriptor";
   //Open the file Descriptor.
   fd = open(devName.c_str(), O_RDWR | O_NOCTTY);
   if(fd < 0)
@@ -95,11 +92,11 @@ int LinuxSerialPacketConn::connect()
     {
       return -1;
     }
-
+  //std::cout << "Setting up connection";
   //set up connection configuration
   memset(&newtio, 0, sizeof(newtio));
   setConnAttr(&newtio);
-
+  //std::cout << "Opening File Descriptor";
   if(tcsetattr(fd, TCSANOW, &newtio) < 0)
     {
       return -1;
@@ -183,5 +180,5 @@ void LinuxSerialPacketConn::writeBytes(uint8_t *buffer, int length)
 //Read bytes from the file descriptor
 int LinuxSerialPacketConn::readBytes(uint8_t *buffer, int length)
 {
-  return read(fd, &buffer, len);
+  return read(fd, &buffer, length);
 }
