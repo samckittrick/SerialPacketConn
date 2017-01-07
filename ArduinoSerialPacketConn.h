@@ -27,11 +27,12 @@
 class ArduinoSerialPacketConn : public SerialPacketConn
 {
 	public:
-		using SerialPacketConn::SerialPacketConn;
-		void connect();
-		void disconnect();
+                ArduinoSerialPacketConn(long speed);
+		int connect();
+		int disconnect();
 
 	private:
+		long baudRate;
 	  //Functions to be overriden by subclass for reading and writing to the serail device
 	int readBytes(byte *buffer, int len); //Read bytes from serial
 	void writeBytes(byte *buffer, int length); //write bytes to serial

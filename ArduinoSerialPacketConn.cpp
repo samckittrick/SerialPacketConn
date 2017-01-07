@@ -22,14 +22,21 @@
  */
 #include "ArduinoSerialPacketConn.h"
 
-void ArduinoSerialPacketConn::connect()
+ArduinoSerialPacketConn::ArduinoSerialPacketConn(long speed)
 {
-  Serial.begin(baudRate);
+  baudRate = speed;
 }
 
-void ArduinoSerialPacketConn::disconnect()
+int ArduinoSerialPacketConn::connect()
+{
+  Serial.begin(baudRate);
+  return 0;
+}
+
+int ArduinoSerialPacketConn::disconnect()
 {
   Serial.end();
+  return 0;
 }
 
 void ArduinoSerialPacketConn::writeBytes(byte *buffer, int length)

@@ -43,22 +43,20 @@
 class SerialPacketConn
 {
  public:
+  SerialPacketConn();
+  
   //The payload will be a dynamically allocated byte array.
   //It will be the responsibility of the the application using this class to free the memory
   typedef void (*PacketReceiver)(const uint8_t *payload, int payloadLength);
   void setPacketReceiver(PacketReceiver receiver);
   
   //Set up and tear down the serial connection
-  SerialPacketConn(long speed);
-  virtual void connect() = 0; //Open Connection
-  virtual void disconnect() = 0; //Close Connection
+  virtual int connect() = 0; //Open Connection
+  virtual int disconnect() = 0; //Close Connection
 
   //Public functions for working with the connection.
   int sendMessage(const uint8_t *data, int dataLength);
   void process();
-
- protected:
-    long baudRate;
   
  private:
   PacketReceiver myReceiver;
