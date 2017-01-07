@@ -5,8 +5,8 @@ INCLUDE=-I../
 
 all: JavaTest LinuxSerialPacketConnTest
 
-LinuxSerialPacketConnTest: LinuxSerialPacketConn.o SerialPacketConn.o
-	$(CC) $(CFLAGS) $(INCLUDE) LinuxSerialPacketConn.o SerialPacketConn.o LinuxSerialPacketConnTest.cpp  -o LinuxSerialPacketConnTest 
+LinuxSerialPacketConnTest: LinuxSerialPacketConn.o SerialPacketConn.o LinuxSerialPacketConnTest.cpp
+	$(CC) $(CFLAGS) -pthread $(INCLUDE) LinuxSerialPacketConn.o SerialPacketConn.o LinuxSerialPacketConnTest.cpp  -o LinuxSerialPacketConnTest 
 
 LinuxSerialPacketConn.o: ../LinuxSerialPacketConn.cpp
 	$(CC) $(CFLAGS) $(INCLUDE) -c ../LinuxSerialPacketConn.cpp

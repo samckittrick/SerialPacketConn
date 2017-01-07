@@ -28,7 +28,6 @@
 #include <string>
 #include <cstring>
 #include <fcntl.h>
-#include <iostream>
 
 class LinuxSerialPacketConn : public SerialPacketConn
 {

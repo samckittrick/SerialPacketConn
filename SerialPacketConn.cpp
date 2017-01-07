@@ -18,7 +18,6 @@
 */
 
 #include "SerialPacketConn.h"
-
 SerialPacketConn::SerialPacketConn()
 {
   recvCount = 0;
@@ -36,12 +35,15 @@ void SerialPacketConn::setPacketReceiver(PacketReceiver receiver)
 //For example, in the loop() or SerialEvent() function.
 void SerialPacketConn::process()
 {
+  //std::cout << "Process called\n";
   //Read in as much data as is available until we reach a max size, or a frame end character
   bool packetComplete = false;
   uint8_t buffer;
   while(readBytes(&buffer, 1) && (recvCount < MAXCOBSPACKETLEN) && !packetComplete)
     {
+      //std::cout << "Received data. ";
       packet[recvCount] = buffer;
+      //printf("%02X\n", buffer);
       recvCount++;
 	  //Serial.write(0xF1);
 	  

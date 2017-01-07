@@ -149,7 +149,7 @@ void LinuxSerialPacketConn::setConnAttr(struct termios *newtio)
   //ToDo: Make this something that can be customized since different values may be more efficient depending on
   //on whether or not we want to seat commands with parameters or streams of data.
   newtio->c_cc[VTIME] = 1;
-  newtio->c_cc[VMIN] = 1;
+  newtio->c_cc[VMIN] = 0;
   
 
 }
@@ -180,5 +180,5 @@ void LinuxSerialPacketConn::writeBytes(uint8_t *buffer, int length)
 //Read bytes from the file descriptor
 int LinuxSerialPacketConn::readBytes(uint8_t *buffer, int length)
 {
-  return read(fd, &buffer, length);
+  return read(fd, buffer, length);
 }
