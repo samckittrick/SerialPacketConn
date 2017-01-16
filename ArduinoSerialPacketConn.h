@@ -27,12 +27,22 @@
 class ArduinoSerialPacketConn : public SerialPacketConn
 {
 	public:
-                ArduinoSerialPacketConn(long speed);
+		//The payload will be a dynamically allocated byte array.
+		//It will be the responsibility of the the application using this class to free the memory
+		typedef void (*PacketReceiver)(const uint8_t *payload, int payloadLength);
+		void setPacketReceiver(PacketReceiver receiver);
+        ArduinoSerialPacketConn(long speed);
 		int connect();
 		int disconnect();
+		void readPacket();
+		int sendMessage(const uint8_t *data, int dataLength);
 
 	private:
 		long baudRate;
+		PacketReceiver myReceiver;
+        unsigned short recvCount;
+
+        uint8_t  packet[MAXCOBSPACKETLEN];
 	  //Functions to be overriden by subclass for reading and writing to the serail device
 	int readBytes(byte *buffer, int len); //Read bytes from serial
 	void writeBytes(byte *buffer, int length); //write bytes to serial

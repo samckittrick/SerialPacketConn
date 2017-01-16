@@ -20,74 +20,37 @@
 #include "SerialPacketConn.h"
 SerialPacketConn::SerialPacketConn()
 {
-  recvCount = 0;
-  payloadLen = 0;
-  myReceiver = nullptr;
 }
 
-//Sets the callback function
-void SerialPacketConn::setPacketReceiver(PacketReceiver receiver)
+int SerialPacketConn::processPacket(uint8_t *packet, int packetLen, uint8_t *data, int dataLen)
 {
-  myReceiver = receiver;
-}
-	  
-//Process serial input. This function should be called periodically
-//For example, in the loop() or SerialEvent() function.
-void SerialPacketConn::process()
-{
-  //std::cout << "Process called\n";
-  //Read in as much data as is available until we reach a max size, or a frame end character
-  bool packetComplete = false;
-  uint8_t buffer;
-  while((readBytes(&buffer, 1) | processBlock) && (recvCount < MAXCOBSPACKETLEN) && !packetComplete)
-    {
-      //std::cout << "Received data. ";
-      packet[recvCount] = buffer;
-      //printf("%02X\n", buffer);
-      recvCount++;
-	  //Serial.write(0xF1);
-	  
-      if(buffer == COBS_FRAMEEND)
-	{
-	  packetComplete = true;
-	  //Serial.write(0xF2);
-	}
-      //recvCount++;
-    }
-
-  if(packetComplete)
-    {
-      //Serial.write(packet, recvCount);
-      //Decode packet
-      payloadLen = COBUnStuff(packet, recvCount, payload);
-      
-      //Verify the checksum here. The result should be 0 if the checksum matches
+	  //Decode packet
+	  uint8_t payload[MAXPAYLOADLEN];
+	  int payloadLen;
+      payloadLen = COBUnStuff(packet, packetLen, payload);
+	  if(payloadLen == -1)
+		  return -1;
+	  //Verify the checksum here. The result should be 0 if the checksum matches
       bool result = calculateChecksum(payload, payloadLen);
-      if((myReceiver != nullptr) && !result) //If someone is listening, notify them of the new packet
-	{
-	  //Allocate memory for the data
-	  uint8_t *data = new uint8_t[payloadLen-1];
+	  if(result != 0)
+		  return -1;
+	  if((payloadLen -1)  > dataLen)
+		return -1;
 	  for(unsigned short i = 0; i < payloadLen-1; i++)
 	    {
 	      data[i] = payload[i];
 	    }
-	      
-	  (*myReceiver)(data, payloadLen-1);
-	}
-      recvCount = 0;
-    }
+	  return payloadLen-1;
 }
 
 
 //Send a packet on the serial line
-int SerialPacketConn::sendMessage(const uint8_t *data, int dataLength)
+int SerialPacketConn::buildPacket(const uint8_t *data, int dataLength, uint8_t *packetBuffer, int packetLen)
 {
   if(dataLength > MAXDATALEN)
     {
       return -1;
     }
-
-  uint8_t sPacket[MAXCOBSPACKETLEN];
 
   //Create the checksum here
   uint8_t checksum  = calculateChecksum(data, dataLength);
@@ -100,9 +63,7 @@ int SerialPacketConn::sendMessage(const uint8_t *data, int dataLength)
   payload[dataLength] = checksum;
 
   //Encode the packet and send it.
-  int packetLen = COBStuff(payload, dataLength + 1, sPacket);
-  writeBytes(sPacket, packetLen);
-  return 0;
+  return packetLen = COBStuff(payload, dataLength + 1, packetBuffer);
 }
 
 //Consistent Overhead Byte Stuffing

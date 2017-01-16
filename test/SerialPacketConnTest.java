@@ -152,7 +152,7 @@ public class SerialPacketConnTest implements SerialPortEventListener
 	
 	public void serialEvent(SerialPortEvent event)
 	{
-		//System.out.println("Serial Event");
+		System.out.println("Serial Event");
 		if(event.getEventType() == SerialPortEvent.DATA_AVAILABLE)
 		{
 			try

@@ -36,6 +36,8 @@
 #define MAXCOBSPACKETLEN 257
 #define MAXPAYLOADLEN  255
 #define MAXDATALEN 254
+#define dataLenFromPacketLen(x) (x-3)
+#define packetLenFromDataLen(x) (x+3)
 #define COBS_FRAMEEND 0
 
 //#define CHECKSUM
@@ -45,33 +47,19 @@ class SerialPacketConn
  public:
   SerialPacketConn();
   
-  //The payload will be a dynamically allocated byte array.
-  //It will be the responsibility of the the application using this class to free the memory
-  typedef void (*PacketReceiver)(const uint8_t *payload, int payloadLength);
-  void setPacketReceiver(PacketReceiver receiver);
-  
   //Set up and tear down the serial connection
   virtual int connect() = 0; //Open Connection
   virtual int disconnect() = 0; //Close Connection
 
   //Public functions for working with the connection.
-  int sendMessage(const uint8_t *data, int dataLength);
-  void process();
+  virtual int sendMessage(const uint8_t *data, int dataLength) = 0;
+  int processPacket(uint8_t *packet, int packetLen, uint8_t *data, int dataLen);
+  int buildPacket(const uint8_t *data, int dataLen, uint8_t *packetBuffer, int packetLen); 
   
  protected:
   bool processBlock;
   
  private:
-  PacketReceiver myReceiver;
-  unsigned short recvCount;
-
-  uint8_t  packet[MAXCOBSPACKETLEN];
-  uint8_t  payload[MAXPAYLOADLEN];
-  int payloadLen;
-  
-  //Functions to be overriden by subclass for reading and writing to the serail device
-  virtual int readBytes(uint8_t *buffer, int len) = 0; //Read bytes from serial
-  virtual void writeBytes(uint8_t *buffer, int length) = 0; //write bytes to serial
   
 
   //Functions for encoding and validating packet

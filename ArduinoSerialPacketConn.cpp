@@ -26,6 +26,14 @@ ArduinoSerialPacketConn::ArduinoSerialPacketConn(long speed)
 {
   baudRate = speed;
   processBlock = false;
+  recvCount = 0;
+  myReceiver = nullptr;
+}
+
+//Sets the callback function
+void ArduinoSerialPacketConn::setPacketReceiver(PacketReceiver receiver)
+{
+  myReceiver = receiver;
 }
 
 int ArduinoSerialPacketConn::connect()
@@ -40,17 +48,50 @@ int ArduinoSerialPacketConn::disconnect()
   return 0;
 }
 
-void ArduinoSerialPacketConn::writeBytes(byte *buffer, int length)
+void ArduinoSerialPacketConn::readPacket()
 {
-	Serial.write(buffer, length);
+	 //std::cout << "Process called\n";
+  //Read in as much data as is available until we reach a max size, or a frame end character
+  bool packetComplete = false;
+  uint8_t buffer;
+  while(Serial.available() && (recvCount < MAXCOBSPACKETLEN) && !packetComplete)
+    {
+      //std::cout << "Received data. ";
+	  buffer = Serial.read();
+      packet[recvCount] = buffer;
+      //printf("%02X\n", buffer);
+      recvCount++;
+	  //Serial.write(0xF1);
+	  
+    if(buffer  == COBS_FRAMEEND)
+	{
+	  packetComplete = true;
+	  //Serial.write(0xF2);
+	}
+      //recvCount++;
+    }
+
+  if(packetComplete)
+    {
+      //Serial.write(packet, recvCount);
+      if((myReceiver != nullptr) ) //If someone is listening, notify them of the new packet
+	  {
+	    //Allocate memory for the data
+	    uint8_t *data = new uint8_t[dataLenFromPacketLen(recvCount)];
+		int processResult = processPacket(packet, recvCount, data, dataLenFromPacketLen(recvCount));
+		if(processResult > 0)
+		{
+			//Serial.write(0xF4);
+			(*myReceiver)(data, processResult);
+		}
+	  }
+      recvCount = 0;
+    }
 }
 
-int ArduinoSerialPacketConn::readBytes(byte *buffer, int len)
+int ArduinoSerialPacketConn::sendMessage(const uint8_t *data, int dataLength)
 {
-  if(Serial.available())
-    {
-      return Serial.readBytes(buffer, len);
-    }
-  else
-    return 0;
+	uint8_t sPacket[packetLenFromDataLen(dataLength)];
+	int packetLen = buildPacket(data, dataLength, sPacket, packetLenFromDataLen(dataLength));
+	Serial.write(sPacket, packetLen);
 }
