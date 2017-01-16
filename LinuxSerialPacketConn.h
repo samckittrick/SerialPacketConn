@@ -39,6 +39,8 @@ class LinuxSerialPacketConn : public SerialPacketConn
   int setDeviceName(std::string name);
   int setBaudRate(int rate);
   const int getBaudRate();
+  int recvData(uint8_t *data, int len);
+  int sendMessage(const uint8_t *data, int datalength);
   
  private:
   int fd;
@@ -46,8 +48,6 @@ class LinuxSerialPacketConn : public SerialPacketConn
   struct termios oldtio;
   std::string devName;
   
-  void writeBytes(uint8_t *buffer, int length);
-  int readBytes(uint8_t *buffer, int length);
   void setConnAttr(struct termios *newtio);
 };
 #endif

@@ -21,7 +21,6 @@
 */
 
 #include "LinuxSerialPacketConn.h"
-
 LinuxSerialPacketConn::LinuxSerialPacketConn()
 {
   processBlock = true;
@@ -175,15 +174,56 @@ int LinuxSerialPacketConn::disconnect()
     }
 }
 
-
-//Write bytes to the file descriptor
-void LinuxSerialPacketConn::writeBytes(uint8_t *buffer, int length)
+int LinuxSerialPacketConn::recvData(uint8_t *data, int len)
 {
-  write(fd, buffer, length);
+  //may need a timeout here.
+  //Read in as much data as is available until we reach a max size, or a frame end character
+  bool packetComplete = false;
+  uint8_t buffer;
+  int recvCount = 0;
+  uint8_t packet[MAXCOBSPACKETLEN];
+  while((recvCount < MAXCOBSPACKETLEN) && !packetComplete)
+    {
+      //std::cout << "Received data. ";
+      if(read(fd, &buffer, 1) >0)
+	{
+	  packet[recvCount] = buffer;
+	  //printf("%02X\n", buffer);
+	  recvCount++;
+	  //Serial.write(0xF1);
+        
+	  if(buffer  == COBS_FRAMEEND)
+	    {
+	      packetComplete = true;
+	      //Serial.write(0xF2);
+	    }
+	}
+      //recvCount++;
+    }
+
+
+  //Allocate memory for the data
+  uint8_t processed[dataLenFromPacketLen(recvCount)];
+  int processResult = processPacket(packet, recvCount, processed, dataLenFromPacketLen(recvCount));
+
+  recvCount = 0;
+  if((processResult > 0) && (processResult <= len))
+    {
+      for(int i = 0; i < len; i++)
+	{
+	  data[i] = processed[i];
+	}
+      return processResult;
+    }
+  else
+    {
+      return -1;
+    }
 }
 
-//Read bytes from the file descriptor
-int LinuxSerialPacketConn::readBytes(uint8_t *buffer, int length)
+int LinuxSerialPacketConn::sendMessage(const uint8_t *data, int dataLength)
 {
-  return read(fd, buffer, length);
+  uint8_t sPacket[packetLenFromDataLen(dataLength)];
+  int packetLen = buildPacket(data, dataLength, sPacket, packetLenFromDataLen(dataLength));
+  write(fd, sPacket, packetLen);
 }
