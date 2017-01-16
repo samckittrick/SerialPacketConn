@@ -25,6 +25,7 @@
 ArduinoSerialPacketConn::ArduinoSerialPacketConn(long speed)
 {
   baudRate = speed;
+  processBlock = false;
 }
 
 int ArduinoSerialPacketConn::connect()

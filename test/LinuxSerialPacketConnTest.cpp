@@ -22,6 +22,7 @@ void serialProcessThread(LinuxSerialPacketConn *conn)
 
 void packetReceived(const uint8_t *payload, int payloadLength)
 {
+  std::cout << "Packet Received: ";
   int i;
   for (i = 0; i < payloadLength; i++)
     {
@@ -56,23 +57,25 @@ int main()
 
   usleep(1000);
 
-  thread t1(serialProcessThread, &conn);
+  //thread t1(serialProcessThread, &conn);
   //t1.detach();
 
   uint8_t message[] = { 0x11, 0x22, 0x00, 0x33 };
 
   conn.sendMessage(message, 4);
+  conn.process();
 
   std::string line; 
   std::getline(std::cin, line);
 
   uint8_t message2[] = { 0x00, 0x02, 0x30, 0xFF, 0xAD };
   conn.sendMessage(message2, 5);
+  conn.process();
 
   std::getline(std::cin, line);
 
   connected = false;
-  t1.join();
+  //  t1.join();
   return 0;
 
 }

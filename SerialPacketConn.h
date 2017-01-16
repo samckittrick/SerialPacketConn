@@ -58,6 +58,9 @@ class SerialPacketConn
   int sendMessage(const uint8_t *data, int dataLength);
   void process();
   
+ protected:
+  bool processBlock;
+  
  private:
   PacketReceiver myReceiver;
   unsigned short recvCount;

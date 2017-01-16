@@ -39,7 +39,7 @@ void SerialPacketConn::process()
   //Read in as much data as is available until we reach a max size, or a frame end character
   bool packetComplete = false;
   uint8_t buffer;
-  while(readBytes(&buffer, 1) && (recvCount < MAXCOBSPACKETLEN) && !packetComplete)
+  while((readBytes(&buffer, 1) | processBlock) && (recvCount < MAXCOBSPACKETLEN) && !packetComplete)
     {
       //std::cout << "Received data. ";
       packet[recvCount] = buffer;

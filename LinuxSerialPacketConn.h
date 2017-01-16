@@ -32,6 +32,7 @@
 class LinuxSerialPacketConn : public SerialPacketConn
 {
  public:
+  LinuxSerialPacketConn();
   int connect();
   int disconnect();
   const std::string getDeviceName();

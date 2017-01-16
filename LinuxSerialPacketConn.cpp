@@ -22,6 +22,11 @@
 
 #include "LinuxSerialPacketConn.h"
 
+LinuxSerialPacketConn::LinuxSerialPacketConn()
+{
+  processBlock = true;
+}
+
 int LinuxSerialPacketConn::setDeviceName(const std::string name)
 {
   devName.assign(name);
