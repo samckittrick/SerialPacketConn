@@ -70,7 +70,7 @@ void loop() {
 ```
 #include <iostream>
 #include <stdio.h>
-#include <stdint.h> 
+#include <stdint.h>
 #include <thread>
 #include "LinuxSerialPacketConn.h"
 
@@ -78,20 +78,9 @@ using namespace std;
 
 bool connected = false;
 
-void serialProcessThread(LinuxSerialPacketConn *conn)
-{
-  cout << "Thread Started\n";
-  while(connected)
-    {
-      //cout << "Processing\n";
-      conn->process();
-      //cout << "Processing done\n";
-      usleep(1000);
-    }
-}
-
 void packetReceived(const uint8_t *payload, int payloadLength)
 {
+  std::cout << "Packet Received: ";
   int i;
   for (i = 0; i < payloadLength; i++)
     {
@@ -107,7 +96,7 @@ int main()
   LinuxSerialPacketConn conn;
   conn.setBaudRate(9600);
   conn.setDeviceName("/dev/ttyACM0");
-  conn.setPacketReceiver(packetReceived);
+  //conn.setPacketReceiver(packetReceived);
 
   cout << "Device name is " << conn.getDeviceName() << endl;
   cout << "Baud rate is " << conn.getBaudRate() << endl;
@@ -126,23 +115,31 @@ int main()
 
   usleep(1000);
 
-  thread t1(serialProcessThread, &conn);
+  //thread t1(serialProcessThread, &conn);
   //t1.detach();
+  std::string line;
+  std::getline(std::cin, line);
 
   uint8_t message[] = { 0x11, 0x22, 0x00, 0x33 };
 
   conn.sendMessage(message, 4);
+  uint8_t buffer[MAXDATALEN];
+  int datalen = conn.recvData(buffer, MAXDATALEN);
+  std::cout << "Packet Received: ";
+  int i;
+  for (i = 0; i < datalen; i++)
+    {
+      if (i > 0) printf(":");
+      printf("%02X", buffer[i]);
+    }
+  printf("\n");
 
-  std::string line; 
-  std::getline(std::cin, line);
-
-  uint8_t message2[] = { 0x00, 0x02, 0x30, 0xFF, 0xAD };
-  conn.sendMessage(message2, 5);
-
+  //std::string line;
   std::getline(std::cin, line);
 
   connected = false;
-  t1.join();
+  conn.disconnect();
+  //  t1.join();
   return 0;
 
 }
