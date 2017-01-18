@@ -9,8 +9,8 @@ LinuxSerialPacketConn.a: $(BUILDDIR)/SerialPacketConn.o $(BUILDDIR)/LinuxSerialP
 $(BUILDDIR)/LinuxSerialPacketConn.o: src/LinuxSerialPacketConn.cpp
 	$(CC) $(CFLAGS) $(INCLUDE) -c src/LinuxSerialPacketConn.cpp -o $@
 
-$(BUILDDIR)/SerialPacketConn.o: src/SerialPacketConn.cpp 
-	$(CC) $(CFLAGS) $(INCLUDE) -c src/SerialPacketConn.cpp -o $@
+$(BUILDDIR)/SerialPacketConn.o: SerialPacketConn.cpp 
+	$(CC) $(CFLAGS) $(INCLUDE) -c SerialPacketConn.cpp -o $@
 
 clean:
 	rm build/*
