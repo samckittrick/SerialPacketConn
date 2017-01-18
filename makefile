@@ -6,10 +6,10 @@ BUILDDIR=build
 LinuxSerialPacketConn.a: $(BUILDDIR)/SerialPacketConn.o $(BUILDDIR)/LinuxSerialPacketConn.o
 	ar cr $(BUILDDIR)/$@ $(BUILDDIR)/*
 
-$(BUILDDIR)/LinuxSerialPacketConn.o: src/LinuxSerialPacketConn.cpp
+$(BUILDDIR)/LinuxSerialPacketConn.o: $(BUILDDIR)/SerialPacketConn.o src/LinuxSerialPacketConn.cpp include/LinuxSerialPacketConn.h
 	$(CC) $(CFLAGS) $(INCLUDE) -c src/LinuxSerialPacketConn.cpp -o $@
 
-$(BUILDDIR)/SerialPacketConn.o: SerialPacketConn.cpp 
+$(BUILDDIR)/SerialPacketConn.o: src/SerialPacketConn.cpp include/SerialPacketConn.h
 	$(CC) $(CFLAGS) $(INCLUDE) -c SerialPacketConn.cpp -o $@
 
 clean:
