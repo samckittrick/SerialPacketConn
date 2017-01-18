@@ -1,6 +1,6 @@
 CC=g++
 CFLAGS=-std=c++11
-INCLUDE=-I../ 
+INCLUDE=-I../include
 
 
 all: JavaTest LinuxSerialPacketConnTest
@@ -8,11 +8,11 @@ all: JavaTest LinuxSerialPacketConnTest
 LinuxSerialPacketConnTest: LinuxSerialPacketConn.o SerialPacketConn.o LinuxSerialPacketConnTest.cpp
 	$(CC) $(CFLAGS) -pthread $(INCLUDE) LinuxSerialPacketConn.o SerialPacketConn.o LinuxSerialPacketConnTest.cpp  -o LinuxSerialPacketConnTest 
 
-LinuxSerialPacketConn.o: ../LinuxSerialPacketConn.cpp
-	$(CC) $(CFLAGS) $(INCLUDE) -c ../LinuxSerialPacketConn.cpp
+LinuxSerialPacketConn.o: ../src/LinuxSerialPacketConn.cpp
+	$(CC) $(CFLAGS) $(INCLUDE) -c ../src/LinuxSerialPacketConn.cpp
 
-SerialPacketConn.o: ../SerialPacketConn.cpp 
-	$(CC) $(CFLAGS) $(INCLUDE) -c ../SerialPacketConn.cpp
+SerialPacketConn.o: ../src/SerialPacketConn.cpp 
+	$(CC) $(CFLAGS) $(INCLUDE) -c ../src/SerialPacketConn.cpp
 
 
 
