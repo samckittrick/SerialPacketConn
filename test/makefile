@@ -21,4 +21,4 @@ JavaTest:
 	javac SerialPacketConnTest.java
 
 clean:
-	rm *.class *.o LinuxSerialPacketConnTest
+	rm -f *.class *.o LinuxSerialPacketConnTest

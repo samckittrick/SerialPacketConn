@@ -185,7 +185,7 @@ int LinuxSerialPacketConn::recvData(uint8_t *data, int len, int timeout)
 
   //Set timeout
   time_t beginTime = time(NULL);
-  while((recvCount < MAXCOBSPACKETLEN) && !packetComplete && (difftime(time(NULL), beginTime)))
+  while((recvCount < MAXCOBSPACKETLEN) && !packetComplete && (difftime(time(NULL), beginTime) < timeout))
     {
       //std::cout << "Received data. ";
       if(read(fd, &buffer, 1) >0)
@@ -197,11 +197,16 @@ int LinuxSerialPacketConn::recvData(uint8_t *data, int len, int timeout)
         
 	  if(buffer  == COBS_FRAMEEND)
 	    {
-	      //packetComplete = true;
+	      packetComplete = true;
 	      //Serial.write(0xF2);
 	    }
 	}
       //recvCount++;
+    }
+
+  if(!packetComplete)
+    {
+      return -1;
     }
 
 
