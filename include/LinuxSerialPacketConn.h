@@ -39,7 +39,9 @@ class LinuxSerialPacketConn : public SerialPacketConn
   int setDeviceName(std::string name);
   int setBaudRate(int rate);
   const int getBaudRate();
-  int recvData(uint8_t *data, int len);
+
+  //Timeoout is in seconds
+  int recvData(uint8_t *data, int len, int timeout);
   int sendMessage(const uint8_t *data, int datalength);
   
  private:

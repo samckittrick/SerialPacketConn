@@ -54,7 +54,11 @@ int main()
 
   conn.sendMessage(message, 4);
   uint8_t buffer[MAXDATALEN];
-  int datalen = conn.recvData(buffer, MAXDATALEN);
+  int datalen = conn.recvData(buffer, MAXDATALEN, 10);
+  if(datalen < 0)
+    {
+      cout << "Timed out";
+    }
   std::cout << "Packet Received: ";
   int i;
   for (i = 0; i < datalen; i++)
