@@ -63,11 +63,11 @@ void ArduinoSerialPacketConn::readPacket()
       recvCount++;
 	  //Serial.write(0xF1);
 	  
-    if(buffer  == COBS_FRAMEEND)
-	{
-	  packetComplete = true;
-	  //Serial.write(0xF2);
-	}
+		if(buffer  == COBS_FRAMEEND)
+		{
+		  packetComplete = true;
+		  //Serial.write(0xF2);
+		}
       //recvCount++;
     }
 
@@ -84,9 +84,14 @@ void ArduinoSerialPacketConn::readPacket()
 			//Serial.write(0xF4);
 			(*myReceiver)(data, processResult);
 		}
+		delete[] data;
 	  }
       recvCount = 0;
     }
+	
+	//If we receive a packet longer than the maximum cobs length, drop it.
+	if(recvCount > MAXCOBSPACKETLEN)
+		recvCount = 0;
 }
 
 int ArduinoSerialPacketConn::sendMessage(const uint8_t *data, int dataLength)
